@@ -22,6 +22,11 @@ variable "nodes" {
   default     = 1 
 }
 
+variable "zookeeper" {
+  description = "Zookeeper to use"
+  type = string
+}
+
 variable "user_groups" {
   description = "User groups to assign to cluster"
   type        = list(string)

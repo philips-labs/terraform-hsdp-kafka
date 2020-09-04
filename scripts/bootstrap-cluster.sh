@@ -7,6 +7,7 @@ usage: bootstrap-cluster.sh
       -c cluster
       -i index
       -d docker
+      -z zookeeper
 EOF
 }
 
@@ -43,17 +44,17 @@ kafka_servers() {
 start_kafka() {
   local index="$1"
   local nodes="$2"
+  local zookeeper="$4"
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
   docker run -d -v kafka:/bitnami/kafka \
     --restart always \
     --name kafka \
-    --env KAFKA_SERVER_ID="$1" \
-    --env ALLOW_ANONYMOUS_LOGIN=yes \
+    --env ALLOW_PLAINTEXT_LISTENER=yes \
+    --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper" \
     --env KAFKA_SERVERS="$servers"  \
-    -p 2181:2181 \
-    -p 18080:18080 \
+    -p 9092:9092 \
     -p 6066:2888 \
     -p 7077:3888 \
     "$3"
@@ -65,19 +66,23 @@ nodes=
 cluster=
 image=
 index=
+zookeeper=
 
 while [ "$1" != "" ]; do
     case $1 in
+        -z | --zookeeper )      shift
+                                zookeeper=$1
+                                ;;
         -n | --nodes )          shift
                                 nodes=$1
                                 ;;
         -c | --cluster )        shift
                                 cluster=$1
                                 ;;
-        -d | --docker )        shift
+        -d | --docker )         shift
                                 image=$1
                                 ;;
-        -i | --index )        shift
+        -i | --index )          shift
                                 index=$1
                                 ;;
         -h | --help )           usage
@@ -92,5 +97,5 @@ done
 echo Bootstrapping node "$index" in cluster "$cluster" with image "$image"
 
 kill_kafka
-start_kafka "$index" "$nodes" "$image"
+start_kafka "$index" "$nodes" "$image" "$zookeeper"
 
