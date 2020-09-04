@@ -8,6 +8,7 @@ usage: bootstrap-cluster.sh
       -i index
       -d docker
       -z zookeeper_connect
+      -x external_ip
 EOF
 }
 
@@ -45,6 +46,7 @@ start_kafka() {
   local index="$1"
   local nodes="$2"
   local zookeeper_connect="$4"
+  local external_ip="$5"
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
@@ -53,8 +55,11 @@ start_kafka() {
     --name kafka \
     --env ALLOW_PLAINTEXT_LISTENER=yes \
     --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
+    --env KAFKA_CFG_LISTENERS=EXTERNAL://:9200 \
+    --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT \
+    --env KAFKA_CFG_ADVERTISED_LISTENERS=EXTERNAL://$external_ip:9200 \
     --env KAFKA_SERVERS="$servers"  \
-    -p 9200:9092 \
+    -p 9200:9200 \
     -p 6066:2888 \
     -p 7077:3888 \
     "$3"
@@ -67,11 +72,15 @@ cluster=
 image=
 index=
 zookeeper_connect=
+external_ip=
 
 while [ "$1" != "" ]; do
     case $1 in
         -z | --zookeeper )      shift
                                 zookeeper_connect=$1
+                                ;;
+        -x | --externalip )     shift
+                                external_ip=$1
                                 ;;
         -n | --nodes )          shift
                                 nodes=$1
@@ -94,8 +103,8 @@ while [ "$1" != "" ]; do
     shift
 done
 
-echo Bootstrapping node "$index" in cluster "$cluster" with image "$image"
+echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image"
 
 kill_kafka
-start_kafka "$index" "$nodes" "$image" "$zookeeper_connect"
+start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip"
 
