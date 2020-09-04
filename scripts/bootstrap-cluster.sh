@@ -13,6 +13,7 @@ EOF
 }
 
 kill_kafka() {
+  echo Killing kafka...
   docker kill kafka
   docker rm kafka
 }
