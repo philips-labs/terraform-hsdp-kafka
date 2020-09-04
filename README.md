@@ -45,12 +45,15 @@ module "kafka" {
 | user | LDAP user to use for connections | `string` | n/a | yes |
 | user\_groups | User groups to assign to cluster | `list(string)` | `[]` | no |
 | volume\_size | The volume size to use in GB | `number` | `50` | no |
+| zookeeper\_connect | Zookeeper connect string to use | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| private\_ips | Private IP addresses of Kafka instances |
+| kafka\_nodes | Container Host IP addresses of Kafka instances |
+| kafka\_port | Port where you can reach Kafka |
+
 
 # Contact / Getting help
 

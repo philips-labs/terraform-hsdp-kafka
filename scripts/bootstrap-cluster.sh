@@ -7,7 +7,7 @@ usage: bootstrap-cluster.sh
       -c cluster
       -i index
       -d docker
-      -z zookeeper
+      -z zookeeper_connect
 EOF
 }
 
@@ -44,7 +44,7 @@ kafka_servers() {
 start_kafka() {
   local index="$1"
   local nodes="$2"
-  local zookeeper="$4"
+  local zookeeper_connect="$4"
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
@@ -52,9 +52,9 @@ start_kafka() {
     --restart always \
     --name kafka \
     --env ALLOW_PLAINTEXT_LISTENER=yes \
-    --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper" \
+    --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
     --env KAFKA_SERVERS="$servers"  \
-    -p 9092:9092 \
+    -p 9200:9092 \
     -p 6066:2888 \
     -p 7077:3888 \
     "$3"
@@ -66,12 +66,12 @@ nodes=
 cluster=
 image=
 index=
-zookeeper=
+zookeeper_connect=
 
 while [ "$1" != "" ]; do
     case $1 in
         -z | --zookeeper )      shift
-                                zookeeper=$1
+                                zookeeper_connect=$1
                                 ;;
         -n | --nodes )          shift
                                 nodes=$1
@@ -97,5 +97,5 @@ done
 echo Bootstrapping node "$index" in cluster "$cluster" with image "$image"
 
 kill_kafka
-start_kafka "$index" "$nodes" "$image" "$zookeeper"
+start_kafka "$index" "$nodes" "$image" "$zookeeper_connect"
 

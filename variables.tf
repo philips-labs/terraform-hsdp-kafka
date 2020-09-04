@@ -22,8 +22,8 @@ variable "nodes" {
   default     = 1 
 }
 
-variable "zookeeper" {
-  description = "Zookeeper to use"
+variable "zookeeper_connect" {
+  description = "Zookeeper connect string to use"
   type = string
 }
 
