@@ -10,12 +10,12 @@ blueprint for future HSDP Container Host modules. Example usage
 module "kafka" {
   source = "github.com/philips-labs/terraform-hsdp-kafka"
 
-  nodes        = 3
-  bastion_host = "bastion.host"
-  user         = "ronswanson"
-  private_key  = file("~/.ssh/dec.key")
-  user_groups  = ["ronswanson", "poc"]a
-  zookeeper    = "zookeeper-server:2181"
+  nodes             = 3
+  bastion_host      = "bastion.host"
+  user              = "ronswanson"
+  private_key       = file("~/.ssh/dec.key")
+  user_groups       = ["ronswanson", "poc"]a
+  zookeeper_connect = "zookeeper-server:2181"
 }
 ```
 
