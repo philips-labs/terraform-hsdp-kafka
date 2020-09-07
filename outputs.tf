@@ -5,5 +5,5 @@ output "kafka_nodes" {
 
 output "kafka_port" {
   description = "Port where you can reach Kafka"
-  value       = "9200"
+  value       = "8282"
 }

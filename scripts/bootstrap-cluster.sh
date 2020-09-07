@@ -56,12 +56,12 @@ start_kafka() {
     --name kafka \
     --env ALLOW_PLAINTEXT_LISTENER=yes \
     --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
-    --env KAFKA_CFG_LISTENERS=EXTERNAL://:9200 \
+    --env KAFKA_CFG_LISTENERS=EXTERNAL://:8282 \
     --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT \
-    --env KAFKA_CFG_ADVERTISED_LISTENERS=EXTERNAL://$external_ip:9200 \
+    --env KAFKA_CFG_ADVERTISED_LISTENERS=EXTERNAL://$external_ip:8282 \
     --env KAFKA_CFG_INTER_BROKER_LISTENER_NAME=EXTERNAL \
     --env KAFKA_SERVERS="$servers"  \
-    -p 9200:9200 \
+    -p 8282:8282 \
     -p 6066:2888 \
     -p 7077:3888 \
     "$3"
