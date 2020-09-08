@@ -11,7 +11,7 @@ terraform {
     }
     null = {
       source  = "null"
-      version = ">= 2.2.1"
+      version = ">= 2.1.1"
     }
   }
 }
