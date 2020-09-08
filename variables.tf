@@ -19,12 +19,12 @@ variable "image" {
 variable "nodes" {
   description = "Number of nodes"
   type        = number
-  default     = 1 
+  default     = 1
 }
 
 variable "zookeeper_connect" {
   description = "Zookeeper connect string to use"
-  type = string
+  type        = string
 }
 
 variable "user_groups" {
@@ -34,16 +34,16 @@ variable "user_groups" {
 }
 
 variable "user" {
-   description = "LDAP user to use for connections"
-   type       = string
+  description = "LDAP user to use for connections"
+  type        = string
 }
 
 variable "bastion_host" {
-   description = "Bastion host to use for SSH connections"
-   type = string
+  description = "Bastion host to use for SSH connections"
+  type        = string
 }
 
 variable "private_key" {
-   description = "Private key for SSH access"
-   type = string
+  description = "Private key for SSH access"
+  type        = string
 }
