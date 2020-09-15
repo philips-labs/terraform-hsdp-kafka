@@ -10,6 +10,12 @@ variable "volume_size" {
   default     = 50
 }
 
+variable "iops" {
+  description = "IOPS to provision for EBS storage"
+  type        = number
+  default     = 500
+}
+
 variable "image" {
   description = "The docker image to use"
   type        = string

@@ -13,6 +13,15 @@ resource "hsdp_container_host" "kafka" {
   user_groups     = var.user_groups
   security_groups = ["analytics"]
 
+  lifecycle {
+    ignore_changes = [
+      volumes,
+      volume_size,
+      instance_type,
+      iops
+    ]
+  }
+
   connection {
     bastion_host = var.bastion_host
     host         = self.private_ip
