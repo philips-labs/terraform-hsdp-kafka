@@ -23,15 +23,18 @@ module "kafka" {
 
 | Name | Version |
 |------|---------|
+| terraform | >= 0.13.0 |
 | hsdp | >= 0.6.1 |
+| null | >= 2.1.1 |
+| random | >= 2.2.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | hsdp | >= 0.6.1 |
-| null | n/a |
-| random | n/a |
+| null | >= 2.1.1 |
+| random | >= 2.2.1 |
 
 ## Inputs
 
@@ -40,6 +43,7 @@ module "kafka" {
 | bastion\_host | Bastion host to use for SSH connections | `string` | n/a | yes |
 | image | The docker image to use | `string` | `"bitnami/kafka:latest"` | no |
 | instance\_type | The instance type to use | `string` | `"t3.large"` | no |
+| iops | IOPS to provision for EBS storage | `number` | `500` | no |
 | nodes | Number of nodes | `number` | `1` | no |
 | private\_key | Private key for SSH access | `string` | n/a | yes |
 | user | LDAP user to use for connections | `string` | n/a | yes |
@@ -53,7 +57,6 @@ module "kafka" {
 |------|-------------|
 | kafka\_nodes | Container Host IP addresses of Kafka instances |
 | kafka\_port | Port where you can reach Kafka |
-
 
 # Contact / Getting help
 
