@@ -55,7 +55,7 @@ variable "private_key" {
 }
 
 variable "retention_hours" {
-  type = string
+  type        = string
   description = "Retention hours for Kakfa topics"
-  default = "-1"
+  default     = "-1"
 }
