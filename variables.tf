@@ -53,3 +53,9 @@ variable "private_key" {
   description = "Private key for SSH access"
   type        = string
 }
+
+variable "retention_hours" {
+  type = string
+  description = "Retention hours for Kakfa topics"
+  default = "-1"
+}

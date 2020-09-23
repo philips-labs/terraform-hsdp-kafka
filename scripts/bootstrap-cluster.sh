@@ -9,6 +9,7 @@ usage: bootstrap-cluster.sh
       -d docker
       -z zookeeper_connect
       -x external_ip
+      -r retention_hours
 EOF
 }
 
@@ -46,8 +47,10 @@ kafka_servers() {
 start_kafka() {
   local index="$1"
   local nodes="$2"
+  local image="$3"
   local zookeeper_connect="$4"
   local external_ip="$5"
+  local retention_hours="$6"
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
@@ -60,11 +63,12 @@ start_kafka() {
     --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT \
     --env KAFKA_CFG_ADVERTISED_LISTENERS=EXTERNAL://$external_ip:8282 \
     --env KAFKA_CFG_INTER_BROKER_LISTENER_NAME=EXTERNAL \
+    --env KAFKA_CFG_LOG_RETENTION_HOURS=$retention_hours \
     --env KAFKA_SERVERS="$servers"  \
     -p 8282:8282 \
     -p 6066:2888 \
     -p 7077:3888 \
-    "$3"
+    "$image"
 }
 
 ##### Main
@@ -75,6 +79,7 @@ image=
 index=
 zookeeper_connect=
 external_ip=
+retention_hours=
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -96,6 +101,9 @@ while [ "$1" != "" ]; do
         -i | --index )          shift
                                 index=$1
                                 ;;
+        -r | --retention )      shift
+                                retention_hours=$1
+                                ;;                        
         -h | --help )           usage
                                 exit
                                 ;;
@@ -108,5 +116,5 @@ done
 echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image"
 
 kill_kafka
-start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip"
+start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours"
 
