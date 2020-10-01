@@ -54,6 +54,7 @@ start_kafka() {
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
+  echo RETENTION_HOURS=$retention_hours
   docker run -d -v kafka:/bitnami/kafka \
     --restart always \
     --name kafka \
@@ -113,7 +114,7 @@ while [ "$1" != "" ]; do
     shift
 done
 
-echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image"
+echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image", retention "$retention_hours"
 
 kill_kafka
 start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours"
