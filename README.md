@@ -19,6 +19,13 @@ module "kafka" {
 }
 ```
 
+__IMPORTANT SECURITY INFORMATION__
+> This module currently **does not offer or enable security features** like
+> Kerberos or mTLS between Kafka, Zookeeper or any connecting client apps.
+> Operating and maintaining applications on Container Host is always
+> your responsibility. This includes ensuring above mentioned security 
+> measures are in place in case you need them.
+
 ## Requirements
 
 | Name | Version |
