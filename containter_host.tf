@@ -57,11 +57,31 @@ resource "null_resource" "cluster" {
     destination = "/home/${var.user}/bootstrap-cluster.sh"
   }
 
+  provisioner "file" {
+    source      =  var.kafka_trust_store.truststore
+    destination = "/home/${var.user}/kafka.truststore.jks"
+  }
+
+  provisioner "file" {
+    source      = var.kafka_key_store.keystore
+    destination = "/home/${var.user}/kafka.keystore.jks"
+  }
+
+    provisioner "file" {
+    source      =  var.zoo_trust_store.truststore
+    destination = "/home/${var.user}/zookeeper.truststore.jks"
+  }
+
+  provisioner "file" {
+    source      = var.zoo_key_store.keystore
+    destination = "/home/${var.user}/zookeeper.keystore.jks"
+  }
+
   provisioner "remote-exec" {
     # Bootstrap script called with private_ip of each node in the cluster
     inline = [
       "chmod +x /home/${var.user}/bootstrap-cluster.sh",
-      "/home/${var.user}/bootstrap-cluster.sh -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\""
+      "/home/${var.user}/bootstrap-cluster.sh -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\" -p ${var.kafka_key_store.password} -t ${var.zoo_trust_store.password} -k ${var.zoo_key_store.password}"
     ]
   }
 }

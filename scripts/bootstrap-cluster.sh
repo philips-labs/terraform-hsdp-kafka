@@ -10,6 +10,9 @@ usage: bootstrap-cluster.sh
       -z zookeeper_connect
       -x external_ip
       -r retention_hours
+      -p kafka_certificate_password
+      -t zookeeper_trust_store_password
+      -k zookeeper_key_store_password
 EOF
 }
 
@@ -44,6 +47,11 @@ kafka_servers() {
   echo "$servers"
 }
 
+create_volume() {
+  docker volume rm kafkacert
+  docker volume create kafkacert
+}
+
 start_kafka() {
   local index="$1"
   local nodes="$2"
@@ -51,6 +59,9 @@ start_kafka() {
   local zookeeper_connect="$4"
   local external_ip="$5"
   local retention_hours="$6"
+  local cert_pass="$7"
+  local zoo_key_pass="$8"
+  local zoo_trust_pass="$9"
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
@@ -58,18 +69,34 @@ start_kafka() {
   docker run -d -v kafka:/bitnami/kafka \
     --restart always \
     --name kafka \
-    --env ALLOW_PLAINTEXT_LISTENER=yes \
     --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
-    --env KAFKA_CFG_LISTENERS=EXTERNAL://:8282 \
-    --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=EXTERNAL:PLAINTEXT \
-    --env KAFKA_CFG_ADVERTISED_LISTENERS=EXTERNAL://$external_ip:8282 \
+    --env KAFKA_CFG_LISTENERS="CLIENT://:9092,EXTERNAL://:8282" \
+    --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP="CLIENT:SSL,EXTERNAL:SSL" \
+    --env KAFKA_CFG_ADVERTISED_LISTENERS="CLIENT://kafka:9092,EXTERNAL://$external_ip:8282" \
     --env KAFKA_CFG_INTER_BROKER_LISTENER_NAME=EXTERNAL \
     --env KAFKA_CFG_LOG_RETENTION_HOURS=$retention_hours \
-    --env KAFKA_SERVERS="$servers"  \
+    --env KAFKA_SERVERS="0.0.0.0:2888:3888"  \
+    --env KAFKA_ZOOKEEPER_PROTOCOL="SSL" \
+    --env KAFKA_ZOOKEEPER_TLS_VERIFY_HOSTNAME="no" \
+    --env KAFKA_CERTIFICATE_PASSWORD="$cert_pass" \
+    --env KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=" " \
+    --env KAFKA_ZOOKEEPER_TLS_KEYSTORE_PASSWORD="$zoo_key_pass" \
+    --env KAFKA_ZOOKEEPER_TLS_TRUSTSTORE_PASSWORD="$zoo_trust_pass" \
+    --env KAFKA_OPTS="" \
+    -v 'kafkacert:/bitnami/kafka/config/certs/' \
     -p 8282:8282 \
     -p 6066:2888 \
     -p 7077:3888 \
     "$image"
+}
+
+load_certificates_and_restart(){
+  docker cp ./kafka.truststore.jks kafka:/bitnami/kafka/config/certs/
+  docker cp ./kafka.keystore.jks kafka:/bitnami/kafka/config/certs/
+  docker cp ./zookeeper.truststore.jks kafka:/bitnami/kafka/config/certs/
+  docker cp ./zookeeper.keystore.jks kafka:/bitnami/kafka/config/certs/
+  docker exec kafka ls -laR /bitnami/kafka/config/certs
+  docker restart kafka -t 10
 }
 
 ##### Main
@@ -81,6 +108,9 @@ index=
 zookeeper_connect=
 external_ip=
 retention_hours=
+kafka_cert_pass=
+zoo_key_store_pass=
+zoo_trust_store_pass=
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -105,6 +135,15 @@ while [ "$1" != "" ]; do
         -r | --retention )      shift
                                 retention_hours=$1
                                 ;;                        
+        -p | --cert-pass )      shift
+                                kafka_cert_pass=$1
+                                ;;                        
+        -k | --zoo-key-pass )   shift
+                                zoo_key_store_pass=$1
+                                ;;                        
+        -t | --zoo-trust-pass ) shift
+                                zoo_trust_store_pass=$1
+                                ;;                        
         -h | --help )           usage
                                 exit
                                 ;;
@@ -117,5 +156,6 @@ done
 echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image", retention "$retention_hours"
 
 kill_kafka
-start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours"
-
+create_volume
+start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass"
+load_certificates_and_restart
