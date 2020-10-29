@@ -72,7 +72,7 @@ start_kafka() {
     --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
     --env KAFKA_CFG_LISTENERS="CLIENT://:9092,EXTERNAL://:8282" \
     --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP="CLIENT:SSL,EXTERNAL:SSL" \
-    --env KAFKA_CFG_ADVERTISED_LISTENERS="CLIENT://kafka:9092,EXTERNAL://$external_ip:8282" \
+    --env KAFKA_CFG_ADVERTISED_LISTENERS="CLIENT://$kafka_broker_name:9092,EXTERNAL://$external_ip:8282" \
     --env KAFKA_CFG_INTER_BROKER_LISTENER_NAME=EXTERNAL \
     --env KAFKA_CFG_LOG_RETENTION_HOURS=$retention_hours \
     --env KAFKA_SERVERS="$servers"  \
@@ -134,16 +134,16 @@ while [ "$1" != "" ]; do
                                 ;;
         -r | --retention )      shift
                                 retention_hours=$1
-                                ;;                        
+                                ;;
         -p | --cert-pass )      shift
                                 kafka_cert_pass=$1
-                                ;;                        
+                                ;;
         -k | --zoo-key-pass )   shift
                                 zoo_key_store_pass=$1
-                                ;;                        
+                                ;;
         -t | --zoo-trust-pass ) shift
                                 zoo_trust_store_pass=$1
-                                ;;                        
+                                ;;
         -h | --help )           usage
                                 exit
                                 ;;
@@ -154,6 +154,7 @@ while [ "$1" != "" ]; do
 done
 
 echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image", retention "$retention_hours"
+kafka_broker_name="kafka-${index}"
 
 kill_kafka
 create_volume
