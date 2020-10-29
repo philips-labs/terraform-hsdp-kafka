@@ -75,7 +75,7 @@ start_kafka() {
     --env KAFKA_CFG_ADVERTISED_LISTENERS="CLIENT://kafka:9092,EXTERNAL://$external_ip:8282" \
     --env KAFKA_CFG_INTER_BROKER_LISTENER_NAME=EXTERNAL \
     --env KAFKA_CFG_LOG_RETENTION_HOURS=$retention_hours \
-    --env KAFKA_SERVERS="0.0.0.0:2888:3888"  \
+    --env KAFKA_SERVERS="$servers"  \
     --env KAFKA_ZOOKEEPER_PROTOCOL="SSL" \
     --env KAFKA_ZOOKEEPER_TLS_VERIFY_HOSTNAME="no" \
     --env KAFKA_CERTIFICATE_PASSWORD="$cert_pass" \
