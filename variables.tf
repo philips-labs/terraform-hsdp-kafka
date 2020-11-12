@@ -92,3 +92,9 @@ variable "zoo_key_store" {
       password  = string }
   )
 }
+
+variable "prometheus_metrics" {
+  description = "Deploy exporters for Prometheus as sidecar"
+  type        = bool
+  default     = false
+}
