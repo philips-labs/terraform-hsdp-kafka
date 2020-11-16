@@ -82,11 +82,8 @@ resource "null_resource" "kafka_exporter" {
   provisioner "remote-exec" {
     # Deploy kafka exporter for nodes
     inline = [
-      # port 9308
       "docker rm -fv kafka_exporter",
-      "docker run -d --name kafka_exporter danielqsj/kafka-exporter " +
-      join(" ",[for node in hsdp_container_host.kafka.*.private_ip: format("--kafka.server=%s:%s",node,"8282")]) +
-      "--zookeeper.server=${var.zookeeper_connect[0]} --use.consumelag.zookeeper"
+      "docker run -d --name kafka_exporter -p 9308:9308 danielqsj/kafka-exporter ${join(" ",[for node in hsdp_container_host.kafka.*.private_ip: format("--kafka.server=%s:%s",node,"8282")])} --zookeeper.server=${var.zookeeper_connect} --use.consumelag.zookeeper"
     ]
   }
 }
