@@ -6,4 +6,4 @@ docker run -d --name=cadvisor_exporter --device=/dev/kmsg -p 8080:8080 \
 -v /var/lib/docker/:/var/lib/docker:ro -v /dev/disk/:/dev/disk:ro \
 gcr.io/cadvisor/cadvisor:v0.38.1
 
-docker run -d --name node_exporter -p 9100:9100 bitnami/node-exporter:latest
+docker run -d --name node_exporter -p 9110:9100 bitnami/node-exporter:latest
