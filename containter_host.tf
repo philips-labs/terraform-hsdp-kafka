@@ -49,6 +49,7 @@ resource "null_resource" "container_exporter" {
     host         = element(hsdp_container_host.kafka.*.private_ip, count.index)
     user         = var.user
     private_key  = var.private_key
+    script_path  = "/home/${var.user}/cluster.bash"
   }
 
   provisioner "file" {
@@ -77,6 +78,7 @@ resource "null_resource" "kafka_exporter" {
     host         = element(hsdp_container_host.kafka.*.private_ip, count.index)
     user         = var.user
     private_key  = var.private_key
+    script_path  = "/home/${var.user}/cluster.bash"
   }
 
   provisioner "remote-exec" {
