@@ -11,4 +11,4 @@ docker run -d --name node_exporter -p 9101:9100 bitnami/node-exporter:latest
 docker run -d --name merge_exporter \
 -e MERGER_PORT=8888 \
 -e MERGER_URLS="http://`hostname`:9101/metrics http://`hostname`:9102/metrics http://`hostname`:9103" \
--p 10001:8888 apentsak/exporter-merger
+-p 10001:8888 quay.io/rebuy/exporter-merger
