@@ -13,6 +13,7 @@ usage: bootstrap-cluster.sh
       -p kafka_certificate_password
       -t zookeeper_trust_store_password
       -k zookeeper_key_store_password
+      -v jmx_exporter_version
 EOF
 }
 
@@ -82,7 +83,9 @@ start_kafka() {
     --env KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=" " \
     --env KAFKA_ZOOKEEPER_TLS_KEYSTORE_PASSWORD="$zoo_key_pass" \
     --env KAFKA_ZOOKEEPER_TLS_TRUSTSTORE_PASSWORD="$zoo_trust_pass" \
-    --env KAFKA_OPTS="" \
+    --env KAFKA_OPTS='-javaagent:/bitnami/prometheus/jmx_export_agent.jar=10001:/bitnami/prometheus/config.yml' \
+    --env JMXPORT=5555 \
+    -v $(pwd):/bitnami/prometheus \
     -v 'kafkacert:/bitnami/kafka/config/certs/' \
     -p 8282:8282 \
     -p 6066:2888 \
@@ -97,6 +100,12 @@ load_certificates_and_restart(){
   docker cp ./zookeeper.keystore.jks kafka:/bitnami/kafka/config/certs/
   docker exec kafka ls -laR /bitnami/kafka/config/certs
   docker restart kafka -t 10
+}
+
+download_jmx_agent(){
+  local version="$1"
+  echo "Download JMX Prometheus JavaAgent ${version}"
+  curl -s -o jmx_export_agent.jar "https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${version}/jmx_prometheus_javaagent-${version}.jar"
 }
 
 ##### Main
@@ -144,6 +153,9 @@ while [ "$1" != "" ]; do
         -t | --zoo-trust-pass ) shift
                                 zoo_trust_store_pass=$1
                                 ;;
+        -v | --jmx-exporter-version ) shift
+                                jmx_exporter_version=$1
+                                ;;
         -h | --help )           usage
                                 exit
                                 ;;
@@ -158,5 +170,6 @@ kafka_broker_name="kafka-${index}"
 
 kill_kafka
 create_volume
+download_jmx_agent "$jmx_exporter_version"
 start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass"
 load_certificates_and_restart

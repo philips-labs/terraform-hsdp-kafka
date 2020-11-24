@@ -134,7 +134,7 @@ resource "null_resource" "cluster" {
     # Bootstrap script called with private_ip of each node in the cluster
     inline = [
       "chmod +x /home/${var.user}/bootstrap-cluster.sh",
-      "/home/${var.user}/bootstrap-cluster.sh -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\" -p ${var.kafka_key_store.password} -t ${var.zoo_trust_store.password} -k ${var.zoo_key_store.password}"
+      "/home/${var.user}/bootstrap-cluster.sh -v ${var.jmx_exporter_version} -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\" -p ${var.kafka_key_store.password} -t ${var.zoo_trust_store.password} -k ${var.zoo_key_store.password}"
     ]
   }
 }

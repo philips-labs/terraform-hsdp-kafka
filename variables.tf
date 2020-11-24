@@ -93,8 +93,8 @@ variable "zoo_key_store" {
   )
 }
 
-variable "prometheus_metrics" {
-  description = "Deploy exporters for Prometheus as sidecar"
-  type        = bool
-  default     = false
+variable "jmx_exporter_version" {
+  description = "Deploy jmx exporters for Prometheus as javaagent"
+  type        = string
+  default     = "0.14.0"
 }
