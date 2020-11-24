@@ -82,6 +82,7 @@ start_kafka() {
     --env KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=" " \
     --env KAFKA_ZOOKEEPER_TLS_KEYSTORE_PASSWORD="$zoo_key_pass" \
     --env KAFKA_ZOOKEEPER_TLS_TRUSTSTORE_PASSWORD="$zoo_trust_pass" \
+    --env KAFKA_OPTS="" \
     --env JMX_PORT=5555 \
     -v 'kafkacert:/bitnami/kafka/config/certs/' \
     -p 8282:8282 \
