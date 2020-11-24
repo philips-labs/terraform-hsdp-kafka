@@ -37,59 +37,6 @@ resource "hsdp_container_host" "kafka" {
   }
 }
 
-//resource "null_resource" "container_exporter" {
-//  count = var.prometheus_metrics ? var.nodes : 0
-//
-//  triggers = {
-//    cluster_instance_ids = join(",", hsdp_container_host.kafka.*.id)
-//  }
-//
-//  connection {
-//    bastion_host = var.bastion_host
-//    host         = element(hsdp_container_host.kafka.*.private_ip, count.index)
-//    user         = var.user
-//    private_key  = var.private_key
-//    script_path  = "/home/${var.user}/cluster.bash"
-//  }
-//
-//  provisioner "file" {
-//    source      = "${path.module}/scripts/container_exporter.sh"
-//    destination = "/home/${var.user}/container_exporter.sh"
-//  }
-//
-//  provisioner "remote-exec" {
-//    # Deploy container exporter for nodes
-//    inline = [
-//      "chmod +x /home/${var.user}/container_exporter.sh",
-//      "/home/${var.user}/container_exporter.sh"
-//    ]
-//  }
-//}
-//
-//resource "null_resource" "kafka_exporter" {
-//  count = var.prometheus_metrics ? 1 : 0
-//
-//  triggers = {
-//    cluster_instance_ids = join(",", hsdp_container_host.kafka.*.id)
-//  }
-//
-//  connection {
-//    bastion_host = var.bastion_host
-//    host         = element(hsdp_container_host.kafka.*.private_ip, count.index)
-//    user         = var.user
-//    private_key  = var.private_key
-//    script_path  = "/home/${var.user}/cluster.bash"
-//  }
-//
-//  provisioner "remote-exec" {
-//    # Deploy kafka exporter for nodes
-//    inline = [
-//      "docker rm -fv kafka_exporter",
-//      "docker run -d --name kafka_exporter -p 9103:9308 danielqsj/kafka-exporter ${join(" ",[for node in hsdp_container_host.kafka.*.private_ip: format("--kafka.server=%s:%s",node,"8282")])} --zookeeper.server=${var.zookeeper_connect} --use.consumelag.zookeeper"
-//    ]
-//  }
-//}
-
 resource "null_resource" "cluster" {
   count = var.nodes
 

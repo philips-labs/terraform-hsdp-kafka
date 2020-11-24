@@ -1,9 +1,0 @@
----
-hostPort: localhost:5555
-username: 
-password: 
-lowercaseOutputLabelNames: true
-lowercaseOutputName: true
-
-rules:
-- pattern: ".*"
