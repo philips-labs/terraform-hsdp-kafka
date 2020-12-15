@@ -4,7 +4,7 @@ resource "random_id" "id" {
 
 resource "hsdp_container_host" "kafka" {
   count         = var.nodes
-  name          = var.host_name == "" ? "kafka-${random_id.id.hex}-${count.index}.dev" : "kafka-${var.host_name}-${count.index}"
+  name          = var.host_name == "" ? "kafka-${random_id.id.hex}-${count.index}.dev" : "kafka-${var.host_name}-${count.index}.${var.tld}"
   iops          = var.iops
   volumes       = 1
   volume_size   = var.volume_size
