@@ -144,7 +144,7 @@ start_kafka_prometheus_exporter(){
   --name kafka_prometheus_exporter \
   -v kafka_prometheus_volume:/etc/certs \
   danielqsj/kafka-exporter \
-  --kafka.server=kafka:9092 \
+  --kafka.server=$external_ip:8282 \
   --web.telemetry-path=/metrics \
   --tls.enabled \
   --tls.ca-file=/etc/certs/ca.pem \
