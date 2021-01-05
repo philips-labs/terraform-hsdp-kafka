@@ -225,3 +225,4 @@ start_jmx_exporter
 start_kafka_prometheus_exporter
 sleep 5 # wait for 5 seconds to print out docker status
 docker ps -a
+docker logs kafka_prometheus_exporter
