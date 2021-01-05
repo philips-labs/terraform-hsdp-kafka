@@ -131,16 +131,9 @@ start_kafka_prometheus_exporter(){
 
   # store these files somewhere
   mkdir -p pem
-  
-  # export ca pem
-  keytool -export  -rfc -alias caroot -keystore ./zookeeper.truststore.jks -file ./pem/ca.pem -storepass $zoo_trust_store_pass -noprompt
 
-  #Export the public key with the certificate format
-  openssl pkcs12 -in ./kafka.keystore.jks -out ./pem/pub.pem -clcerts -nokeys -passin pass:$kafka_cert_pass
-
-  #Export the private key with the PEM format
-  keytool -importkeystore -srckeystore ./kafka.keystore.jks -destkeystore tempKeyStore.p12 -deststoretype PKCS12 -srcstorepass $kafka_cert_pass -deststorepass $kafka_cert_pass -noprompt
-  openssl pkcs12 -in tempKeyStore.p12 -nodes -nocerts -out ./pem/private.pem  -passin pass:$kafka_cert_pass -passout pass:$kafka_cert_pass
+  # move cert files
+  mv ./ca.pem ./public.pem ./private.pem ./pem
 
   docker rm -fv kafka_prometheus_exporter
   docker volume rm kafka_prometheus_volume
@@ -155,7 +148,7 @@ start_kafka_prometheus_exporter(){
   --web.telemetry-path=/pmetrics \
   --tls.enabled=true \
   --tls.ca-file=/etc/cers/ca.pem \
-  --tls.cert-file=/etc/cers/pub.pem \
+  --tls.cert-file=/etc/cers/public.pem \
   --tls.key-file=/etc/cers/private.pem \
   --tls.insecure-skip-tls-verify=true
 }

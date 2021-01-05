@@ -78,6 +78,21 @@ resource "null_resource" "cluster" {
     destination = "/home/${var.user}/zookeeper.keystore.jks"
   }
 
+  provisioner "file" {
+    source      = var.ca_root
+    destination = "/home/${var.user}/ca.pem"
+  }
+
+  provisioner "file" {
+    source      = var.public_key
+    destination = "/home/${var.user}/public.pem"
+  }
+  
+  provisioner "file" {
+    source      = var.private_key
+    destination = "/home/${var.user}/private.pem"
+  }
+
   provisioner "remote-exec" {
     # Bootstrap script called with private_ip of each node in the cluster
     inline = [

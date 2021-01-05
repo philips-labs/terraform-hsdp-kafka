@@ -116,3 +116,16 @@ variable "zoo_key_store" {
       password  = string }
   )
 }
+
+variable "ca_root" {
+  description = "CA root store for SSL"
+  type        = string
+}
+variable "public_key" {
+  description = "Public Key for SSL"
+  type        = string
+}
+variable "private_key" {
+  description = "Private Key for SSL"
+  type        = string
+}
