@@ -115,7 +115,7 @@ start_jmx_exporter(){
   docker volume rm jmx_config_volume
 
   # rename and move the jmx config file
-  mv jmxconfig.yml ./jmx/config.yml
+  cp ./jmxconfig.yml ./jmx/config.yml
   
   # create jmx volume mapping the jmx config file
   docker volume create --driver local --name jmx_config_volume --opt type=none --opt device=`pwd`/jmx --opt o=uid=root,gid=root --opt o=bind
