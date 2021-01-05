@@ -121,7 +121,7 @@ start_jmx_exporter(){
   docker volume create --driver local --name jmx_config_volume --opt type=none --opt device=`pwd`/jmx --opt o=uid=root,gid=root --opt o=bind
 
   # start jmx exporter
-  docker run -d -p 10001:5556 \
+  docker run -d -p 9308:5556 \
   --name jmx_exporter \
   -v jmx_config_volume:/opt/bitnami/jmx-exporter/example_configs \
   bitnami/jmx-exporter:latest 5556 example_configs/config.yml
@@ -140,7 +140,7 @@ start_kafka_prometheus_exporter(){
   docker volume create --driver local --name kafka_prometheus_volume --opt type=none --opt device=`pwd`/pem --opt o=uid=root,gid=root --opt o=bind
 
   #---- Run kafka prometheus exporter (https://github.com/danielqsj/kafka_exporter)
-  docker run -d -p 9308:9308 \
+  docker run -d -p 10001:9308 \
   --name kafka_prometheus_exporter \
   -v kafka_prometheus_volume:/etc/certs \
   danielqsj/kafka-exporter \
@@ -223,3 +223,4 @@ start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$ret
 load_certificates_and_restart
 start_jmx_exporter
 start_kafka_prometheus_exporter
+docker ps -a
