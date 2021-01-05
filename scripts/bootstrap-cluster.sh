@@ -223,4 +223,5 @@ start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$ret
 load_certificates_and_restart
 start_jmx_exporter
 start_kafka_prometheus_exporter
+sleep 5 # wait for 5 seconds to print out docker status
 docker ps -a
