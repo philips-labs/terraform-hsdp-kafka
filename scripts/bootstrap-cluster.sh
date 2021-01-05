@@ -145,7 +145,7 @@ start_kafka_prometheus_exporter(){
   -v kafka_prometheus_volume:/etc/certs \
   danielqsj/kafka-exporter \
   --kafka.server=kafka:9092 \
-  --web.telemetry-path=/pmetrics \
+  --web.telemetry-path=/metrics \
   --tls.enabled=true \
   --tls.ca-file=/etc/cers/ca.pem \
   --tls.cert-file=/etc/cers/public.pem \
