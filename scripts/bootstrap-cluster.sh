@@ -13,6 +13,8 @@ usage: bootstrap-cluster.sh
       -p kafka_certificate_password
       -t zookeeper_trust_store_password
       -k zookeeper_key_store_password
+      -R default_replication_factor
+      -a auto_create_topics_enable
 EOF
 }
 
@@ -62,6 +64,8 @@ start_kafka() {
   local cert_pass="$7"
   local zoo_key_pass="$8"
   local zoo_trust_pass="$9"
+  local default_replication_factor="${10}"
+  local auto_create_topics_enable="${11}"
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
@@ -84,6 +88,8 @@ start_kafka() {
     --env KAFKA_ZOOKEEPER_TLS_TRUSTSTORE_PASSWORD="$zoo_trust_pass" \
     --env KAFKA_OPTS="" \
     --env JMX_PORT=5555 \
+    --env KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=$default_replication_factor \
+    --env KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=$auto_create_topics_enable \
     -v 'kafkacert:/bitnami/kafka/config/certs/' \
     -p 8282:8282 \
     -p 6066:2888 \
@@ -112,6 +118,8 @@ retention_hours=
 kafka_cert_pass=
 zoo_key_store_pass=
 zoo_trust_store_pass=
+default_replication_factor=
+auto_create_topics_enable=
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -136,6 +144,9 @@ while [ "$1" != "" ]; do
         -r | --retention )      shift
                                 retention_hours=$1
                                 ;;
+        -R | --replication )    shift
+                                default_replication_factor=$1
+                                ;;
         -p | --cert-pass )      shift
                                 kafka_cert_pass=$1
                                 ;;
@@ -144,6 +155,9 @@ while [ "$1" != "" ]; do
                                 ;;
         -t | --zoo-trust-pass ) shift
                                 zoo_trust_store_pass=$1
+                                ;;
+        -a | --auto-create-topics ) shift
+                                auto_create_topics_enable=$1
                                 ;;
         -h | --help )           usage
                                 exit
@@ -159,5 +173,5 @@ kafka_broker_name="kafka-${index}"
 
 kill_kafka
 create_volume
-start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass"
+start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable"
 load_certificates_and_restart
