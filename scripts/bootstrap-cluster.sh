@@ -222,5 +222,5 @@ kill_kafka
 create_volume
 start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable"
 load_certificates_and_restart
-start_jmx_exporter
-start_kafka_prometheus_exporter
+#start_jmx_exporter
+#start_kafka_prometheus_exporter
