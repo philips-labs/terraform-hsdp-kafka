@@ -117,15 +117,15 @@ variable "zoo_key_store" {
   )
 }
 
-variable "ca_root" {
+variable "kafka_ca_root" {
   description = "CA root store for SSL"
   type        = string
 }
-variable "public_key" {
+variable "kafka_public_key" {
   description = "Public Key for SSL"
   type        = string
 }
-variable "private_key" {
+variable "kafka_private_key" {
   description = "Private Key for SSL"
   type        = string
 }

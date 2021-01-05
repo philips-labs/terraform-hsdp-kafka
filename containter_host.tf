@@ -79,17 +79,17 @@ resource "null_resource" "cluster" {
   }
 
   provisioner "file" {
-    source      = var.ca_root
+    source      = var.kafka_ca_root
     destination = "/home/${var.user}/ca.pem"
   }
 
   provisioner "file" {
-    source      = var.public_key
+    source      = var.kafka_public_key
     destination = "/home/${var.user}/public.pem"
   }
-  
+
   provisioner "file" {
-    source      = var.private_key
+    source      = var.kafka_private_key
     destination = "/home/${var.user}/private.pem"
   }
 
