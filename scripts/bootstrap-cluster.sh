@@ -20,8 +20,8 @@ EOF
 
 kill_kafka() {
   echo Killing kafka...
-  docker kill kafka
-  docker rm kafka
+  docker kill $kafka_broker_name
+  docker rm $kafka_broker_name
 }
 
 kafka_servers() {
@@ -70,9 +70,9 @@ start_kafka() {
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
   echo RETENTION_HOURS=$retention_hours
-  docker run -d -v kafka:/bitnami/kafka \
+  docker run -d -v $kafka_broker_name:/bitnami/kafka \
     --restart always \
-    --name kafka \
+    --name $kafka_broker_name \
     --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
     --env KAFKA_CFG_LISTENERS="CLIENT://:9092,EXTERNAL://:8282" \
     --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP="CLIENT:SSL,EXTERNAL:SSL" \
@@ -98,12 +98,59 @@ start_kafka() {
 }
 
 load_certificates_and_restart(){
-  docker cp ./kafka.truststore.jks kafka:/bitnami/kafka/config/certs/
-  docker cp ./kafka.keystore.jks kafka:/bitnami/kafka/config/certs/
-  docker cp ./zookeeper.truststore.jks kafka:/bitnami/kafka/config/certs/
-  docker cp ./zookeeper.keystore.jks kafka:/bitnami/kafka/config/certs/
-  docker exec kafka ls -laR /bitnami/kafka/config/certs
-  docker restart kafka -t 10
+  docker cp ./kafka.truststore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
+  docker cp ./kafka.keystore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
+  docker cp ./zookeeper.truststore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
+  docker cp ./zookeeper.keystore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
+  docker exec $kafka_broker_name ls -laR /bitnami/kafka/config/certs
+  docker restart $kafka_broker_name -t 10
+}
+
+start_jmx_exporter(){
+  # create dir to contain jmx config file
+  mkdir -p jmx
+
+  # remove any left-over volume(s)
+  docker rm -fv jmx_exporter 2&>1
+  docker volume rm jmx_config_volume
+
+  # rename and move the jmx config file
+  cp ./jmxconfig.yml ./jmx/config.yml
+  
+  # create jmx volume mapping the jmx config file
+  docker volume create --driver local --name jmx_config_volume --opt type=none --opt device=`pwd`/jmx --opt o=uid=root,gid=root --opt o=bind
+
+  # start jmx exporter
+  docker run -d -p 10001:5556 \
+  --name jmx_exporter \
+  -v jmx_config_volume:/opt/bitnami/jmx-exporter/example_configs \
+  bitnami/jmx-exporter:latest 5556 example_configs/config.yml
+}
+
+start_kafka_prometheus_exporter(){
+
+  # store these files somewhere
+  mkdir -p pem
+
+  # move cert files
+  mv ./ca.pem ./public.pem ./private.pem ./pem
+
+  docker rm -fv kafka_prometheus_exporter
+  docker volume rm kafka_prometheus_volume
+  docker volume create --driver local --name kafka_prometheus_volume --opt type=none --opt device=`pwd`/pem --opt o=uid=root,gid=root --opt o=bind
+
+  #---- Run kafka prometheus exporter (https://github.com/danielqsj/kafka_exporter)
+  docker run -d -p 9308:9308 \
+  --name kafka_prometheus_exporter \
+  -v kafka_prometheus_volume:/etc/certs \
+  danielqsj/kafka-exporter \
+  --kafka.server=$kafka_broker_name:9092 \
+  --web.telemetry-path=/pmetrics \
+  --tls.enabled=true \
+  --tls.ca-file=/etc/cers/ca.pem \
+  --tls.cert-file=/etc/cers/public.pem \
+  --tls.key-file=/etc/cers/private.pem \
+  --tls.insecure-skip-tls-verify=true
 }
 
 ##### Main
@@ -175,3 +222,5 @@ kill_kafka
 create_volume
 start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable"
 load_certificates_and_restart
+start_jmx_exporter
+start_kafka_prometheus_exporter
