@@ -111,7 +111,7 @@ start_jmx_exporter(){
   mkdir -p jmx
 
   # remove any left-over volume(s)
-  docker rm -fv jmx_exporter
+  docker rm -fv jmx_exporter 2&>1
   docker volume rm jmx_config_volume
 
   # rename and move the jmx config file
