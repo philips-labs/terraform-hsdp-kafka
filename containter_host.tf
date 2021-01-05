@@ -59,6 +59,11 @@ resource "null_resource" "cluster" {
   }
 
   provisioner "file" {
+    source      = "${path.module}/scripts/jmxconfig.yml"
+    destination = "/home/${var.user}/jmxconfig.yml"
+  }
+
+  provisioner "file" {
     source      =  var.kafka_trust_store.truststore
     destination = "/home/${var.user}/kafka.truststore.jks"
   }
