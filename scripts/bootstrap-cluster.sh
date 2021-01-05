@@ -146,11 +146,11 @@ start_kafka_prometheus_exporter(){
   danielqsj/kafka-exporter \
   --kafka.server=kafka:9092 \
   --web.telemetry-path=/metrics \
-  --tls.enabled=true \
-  --tls.ca-file=/etc/cers/ca.pem \
-  --tls.cert-file=/etc/cers/public.pem \
-  --tls.key-file=/etc/cers/private.pem \
-  --tls.insecure-skip-tls-verify=true
+  --tls.enabled \
+  --tls.ca-file=/etc/certs/ca.pem \
+  --tls.cert-file=/etc/certs/public.pem \
+  --tls.key-file=/etc/certs/private.pem \
+  --tls.insecure-skip-tls-verify
 }
 
 ##### Main
