@@ -20,8 +20,8 @@ EOF
 
 kill_kafka() {
   echo Killing kafka...
-  docker kill $kafka_broker_name
-  docker rm $kafka_broker_name
+  docker kill kafka
+  docker rm kafka
 }
 
 kafka_servers() {
@@ -70,13 +70,13 @@ start_kafka() {
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
   echo RETENTION_HOURS=$retention_hours
-  docker run -d -v $kafka_broker_name:/bitnami/kafka \
+  docker run -d -v kafka:/bitnami/kafka \
     --restart always \
-    --name $kafka_broker_name \
+    --name kafka \
     --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
     --env KAFKA_CFG_LISTENERS="CLIENT://:9092,EXTERNAL://:8282" \
     --env KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP="CLIENT:SSL,EXTERNAL:SSL" \
-    --env KAFKA_CFG_ADVERTISED_LISTENERS="CLIENT://$kafka_broker_name:9092,EXTERNAL://$external_ip:8282" \
+    --env KAFKA_CFG_ADVERTISED_LISTENERS="CLIENT://kafka:9092,EXTERNAL://$external_ip:8282" \
     --env KAFKA_CFG_INTER_BROKER_LISTENER_NAME=EXTERNAL \
     --env KAFKA_CFG_LOG_RETENTION_HOURS=$retention_hours \
     --env KAFKA_SERVERS="$servers"  \
@@ -98,12 +98,12 @@ start_kafka() {
 }
 
 load_certificates_and_restart(){
-  docker cp ./kafka.truststore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
-  docker cp ./kafka.keystore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
-  docker cp ./zookeeper.truststore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
-  docker cp ./zookeeper.keystore.jks $kafka_broker_name:/bitnami/kafka/config/certs/
-  docker exec $kafka_broker_name ls -laR /bitnami/kafka/config/certs
-  docker restart $kafka_broker_name -t 10
+  docker cp ./kafka.truststore.jks kafka:/bitnami/kafka/config/certs/
+  docker cp ./kafka.keystore.jks kafka:/bitnami/kafka/config/certs/
+  docker cp ./zookeeper.truststore.jks kafka:/bitnami/kafka/config/certs/
+  docker cp ./zookeeper.keystore.jks kafka:/bitnami/kafka/config/certs/
+  docker exec kafka ls -laR /bitnami/kafka/config/certs
+  docker restart kafka -t 10
 }
 
 start_jmx_exporter(){
@@ -144,7 +144,7 @@ start_kafka_prometheus_exporter(){
   --name kafka_prometheus_exporter \
   -v kafka_prometheus_volume:/etc/certs \
   danielqsj/kafka-exporter \
-  --kafka.server=$kafka_broker_name:9092 \
+  --kafka.server=kafka:9092 \
   --web.telemetry-path=/pmetrics \
   --tls.enabled=true \
   --tls.ca-file=/etc/cers/ca.pem \
@@ -216,7 +216,6 @@ while [ "$1" != "" ]; do
 done
 
 echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image", retention "$retention_hours"
-kafka_broker_name="kafka-${index}"
 
 kill_kafka
 create_volume
