@@ -59,8 +59,8 @@ resource "null_resource" "cluster" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/scripts/jmxconfig.yml"
-    destination = "/home/${var.user}/jmxconfig.yml"
+    source      = "${path.module}/scripts/jmxconfig.yml.tmpl"
+    destination = "/home/${var.user}/jmxconfig.yml.tmpl"
   }
 
   provisioner "file" {
