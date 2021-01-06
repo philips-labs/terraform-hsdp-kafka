@@ -24,6 +24,14 @@ kill_kafka() {
   docker rm $kafka_broker_name
 }
 
+kill_monitoring() {
+  echo Killing monitoring tools...
+  docker kill jmx_exporter 2&>1
+  docker rm -f jmx_exporter 2&>1
+  docker kill kafka_prometheus_exporter 2&>1
+  docker rm -f kafka_prometheus_exporter 2&>1
+}
+
 kafka_servers() {
   local index=$1
   local nodes=$2
@@ -47,6 +55,11 @@ kafka_servers() {
   done
 
   echo "$servers"
+}
+
+create_network() {
+  docker network rm $kafka_network 2&>1
+  docker network create $kafka_network
 }
 
 create_volume() {
@@ -90,6 +103,7 @@ start_kafka() {
     --env JMX_PORT=5555 \
     --env KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=$default_replication_factor \
     --env KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=$auto_create_topics_enable \
+    --network $kafka_network
     -v 'kafkacert:/bitnami/kafka/config/certs/' \
     -p 8282:8282 \
     -p 6066:2888 \
@@ -124,6 +138,7 @@ start_jmx_exporter(){
   # start jmx exporter
   docker run -d -p 10001:5556 \
   --name jmx_exporter \
+  --network $kafka_network \
   -v jmx_config_volume:/opt/bitnami/jmx-exporter/example_configs \
   bitnami/jmx-exporter:latest 5556 example_configs/config.yml
 }
@@ -143,6 +158,7 @@ start_kafka_prometheus_exporter(){
   #---- Run kafka prometheus exporter (https://github.com/danielqsj/kafka_exporter)
   docker run -d -p 10000:9308 \
   --name kafka_prometheus_exporter \
+  --network $kafka_network \
   -v kafka_prometheus_volume:/etc/certs \
   danielqsj/kafka-exporter \
   --kafka.server=$external_ip:8282 \
@@ -218,9 +234,12 @@ done
 
 echo Bootstrapping node "$external_ip" "$index" in cluster "$cluster" with image "$image", retention "$retention_hours"
 kafka_broker_name="kafka-${index}"
+kafka_network="kafka-${index}-network"
 
+kill_monitoring
 kill_kafka
 create_volume
+create_network
 start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable"
 load_certificates_and_restart
 start_jmx_exporter
