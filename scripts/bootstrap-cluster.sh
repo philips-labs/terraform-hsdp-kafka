@@ -140,7 +140,7 @@ start_kafka_prometheus_exporter(){
   docker volume create --driver local --name kafka_prometheus_volume --opt type=none --opt device=`pwd`/pem --opt o=uid=root,gid=root --opt o=bind
 
   #---- Run kafka prometheus exporter (https://github.com/danielqsj/kafka_exporter)
-  docker run -d -p 9308:9308 \
+  docker run -d -p 10000:9308 \
   --name kafka_prometheus_exporter \
   -v kafka_prometheus_volume:/etc/certs \
   danielqsj/kafka-exporter \
