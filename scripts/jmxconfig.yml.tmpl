@@ -2,7 +2,7 @@
 startDelaySeconds: 0
 username:
 password:
-jmxUrl: service:jmx:rmi:///jndi/rmi://kafka:5555/jmxrmi
+jmxUrl: service:jmx:rmi:///jndi/rmi://${container_name}:5555/jmxrmi
 ssl: false
 lowercaseOutputLabelNames: true
 lowercaseOutputName: true
