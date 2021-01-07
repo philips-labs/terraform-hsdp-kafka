@@ -59,7 +59,7 @@ kafka_servers() {
 
 create_network() {
   docker network rm $kafka_network 2&>1
-  docker network create $kafka_network
+  docker network create --opt com.docker.network.bridge.host_binding_ipv4=0.0.0.0 $kafka_network
 }
 
 create_volume() {
