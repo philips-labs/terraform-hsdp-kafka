@@ -83,7 +83,7 @@ start_kafka() {
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
   echo RETENTION_HOURS=$retention_hours
-  docker run -d -v $kafka_broker_name:/bitnami/kafka \
+  docker run -d \
     --restart always \
     --name $kafka_broker_name \
     --env KAFKA_CFG_ZOOKEEPER_CONNECT="$zookeeper_connect" \
@@ -104,6 +104,7 @@ start_kafka() {
     --env KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=$default_replication_factor \
     --env KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=$auto_create_topics_enable \
     --network $kafka_network \
+    -v $kafka_broker_name:/bitnami/kafka
     -v 'kafkacert:/bitnami/kafka/config/certs/' \
     -p 8282:8282 \
     -p 6066:2888 \
