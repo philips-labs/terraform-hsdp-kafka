@@ -5,14 +5,14 @@ variable "instance_type" {
 }
 
 variable "host_name" {
-  type = string
-  default = ""
+  type        = string
+  default     = ""
   description = "The middlename for your host default is a random number"
 }
 
 variable "tld" {
-  type = string
-  default = "dev"
+  type        = string
+  default     = "dev"
   description = "The tld for your host default is a dev"
 }
 
@@ -75,32 +75,32 @@ variable "retention_hours" {
 
 variable "kafka_trust_store" {
   description = "Trust store for SSL"
-  type        = object (
-    { truststore  = string ,
-      password    = string }
+  type = object(
+    { truststore = string,
+    password = string }
   )
 }
 
 variable "kafka_key_store" {
   description = "A list of key stores one for each nore"
-  type        = object(
-    { keystore  = string ,
-      password  = string }
+  type = object(
+    { keystore = string,
+    password = string }
   )
 }
 
 variable "zoo_trust_store" {
   description = "Zookeeper Trust store for SSL"
-  type        = object (
-    { truststore = string ,
-      password   = string }
+  type = object(
+    { truststore = string,
+    password = string }
   )
 }
 
 variable "zoo_key_store" {
   description = "Zookeeper Trust store for SSL"
-  type        = object (
-    { keystore  = string ,
-      password  = string }
+  type = object(
+    { keystore = string,
+    password = string }
   )
 }
