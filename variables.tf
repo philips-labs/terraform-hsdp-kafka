@@ -72,6 +72,18 @@ variable "retention_hours" {
   default     = "-1"
 }
 
+variable "default_replication_factor" {
+  description = "default kafka server replication factor"
+  type        = number
+  default     = 1
+}
+
+variable "auto_create_topics_enable" {
+  description = "turn on or off auto-create-topics, defaults to true"
+  type        = bool
+  default     = true
+}
+
 
 variable "kafka_trust_store" {
   description = "Trust store for SSL"
@@ -103,4 +115,17 @@ variable "zoo_key_store" {
     { keystore = string,
     password = string }
   )
+}
+
+variable "kafka_ca_root" {
+  description = "CA root store for SSL"
+  type        = string
+}
+variable "kafka_public_key" {
+  description = "Public Key for SSL"
+  type        = string
+}
+variable "kafka_private_key" {
+  description = "Private Key for SSL"
+  type        = string
 }
