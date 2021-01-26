@@ -1,3 +1,7 @@
+locals {
+  enable_exporters = var.kafka_ca_root != "" && var.kafka_public_key != "" && var.kafka_private_key != "" ? true : false
+}
+
 resource "random_id" "id" {
   byte_length = 8
 }
@@ -93,6 +97,6 @@ resource "hsdp_container_host_exec" "cluster" {
   commands = [
     "chmod +x /home/${var.user}/bootstrap-cluster.sh",
     "chmod 777 /home/${var.user}/jmxconfig.yml.tmpl",
-    "/home/${var.user}/bootstrap-cluster.sh -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\" -p ${var.kafka_key_store.password} -t ${var.zoo_trust_store.password} -k ${var.zoo_key_store.password} -R ${var.default_replication_factor} -a ${var.auto_create_topics_enable}"
+    "/home/${var.user}/bootstrap-cluster.sh -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\" -p ${var.kafka_key_store.password} -t ${var.zoo_trust_store.password} -k ${var.zoo_key_store.password} -R ${var.default_replication_factor} -a ${var.auto_create_topics_enable} -e ${var.enable_exporters}"
   ]
 }

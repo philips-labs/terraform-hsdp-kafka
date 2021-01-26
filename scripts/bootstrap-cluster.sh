@@ -15,6 +15,7 @@ usage: bootstrap-cluster.sh
       -k zookeeper_key_store_password
       -R default_replication_factor
       -a auto_create_topics_enable
+      -e enable_exporters
 EOF
 }
 
@@ -224,6 +225,9 @@ while [ "$1" != "" ]; do
         -a | --auto-create-topics ) shift
                                 auto_create_topics_enable=$1
                                 ;;
+        -e | --enable-exporters ) shift
+                                enable_exporters=$1
+                                ;;
         -h | --help )           usage
                                 exit
                                 ;;
@@ -243,8 +247,12 @@ create_volume
 create_network
 start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable"
 load_certificates_and_restart
-start_jmx_exporter
-start_kafka_prometheus_exporter
+
+if [ "$enable_exporters" == true ]; then
+  start_jmx_exporter
+  start_kafka_prometheus_exporter
+fi
+
 sleep 30 # wait for 5 seconds to print out docker status
 docker ps -a
 docker start kafka_prometheus_exporter
