@@ -14,7 +14,7 @@ module "kafka" {
   bastion_host      = "bastion.host"
   user              = "ronswanson"
   private_key       = file("~/.ssh/dec.key")
-  user_groups       = ["ronswanson", "poc"]a
+  user_groups       = ["ronswanson", "poc"]
   zookeeper_connect = "zookeeper-server:2181"
   kafka_trust_store   = {
     truststore = "./kafkatruststore.jks"
@@ -47,16 +47,14 @@ __IMPORTANT SECURITY INFORMATION__
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13.0 |
-| hsdp | >= 0.6.6 |
-| null | >= 2.1.1 |
+| hsdp | >= 0.9.1 |
 | random | >= 2.2.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| hsdp | >= 0.6.6 |
-| null | >= 2.1.1 |
+| hsdp | >= 0.9.1 |
 | random | >= 2.2.1 |
 
 ## Inputs
