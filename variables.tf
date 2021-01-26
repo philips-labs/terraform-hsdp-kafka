@@ -133,3 +133,9 @@ variable "kafka_private_key" {
   default     = "" 
   type        = string
 }
+
+variable "enable_exporters" {
+  description = "Indicates whether jmx exporter and kafka exporter is enabled or not"
+  default     = false
+  type        = bool 
+}
