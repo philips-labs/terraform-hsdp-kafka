@@ -186,6 +186,7 @@ zoo_key_store_pass=
 zoo_trust_store_pass=
 default_replication_factor=
 auto_create_topics_enable=
+enable_exporters=
 
 while [ "$1" != "" ]; do
     case $1 in
