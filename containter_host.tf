@@ -28,10 +28,6 @@ resource "hsdp_container_host" "kafka" {
     user                = var.user
     private_key         = var.private_key
     script_path         = "/home/${var.user}/bootstrap.bash"
-    proxy_host          = var.proxy_host
-    proxy_port          = var.proxy_port
-    proxy_user_name     = var.proxy_user_name
-    proxy_user_password = var.proxy_user_password
   }
 
   provisioner "remote-exec" {

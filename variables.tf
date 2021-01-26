@@ -129,29 +129,3 @@ variable "kafka_private_key" {
   description = "Private Key for SSL"
   type        = string
 }
-
-variable "proxy_host" {
-  description = "Proxy host which can be used to ssh via proxy"
-  default     = "" 
-  type        = string
-}
-
-variable "proxy_port" {
-  description = "Proxy port which can be used to ssh via proxy"
-  default     = ""
-  type        = string
-}
-
-variable "proxy_user_name" {
-  description = "Proxy username which can be used to authenticate for the given proxy"
-  default     = ""
-  type        = string
-}
-
-variable "proxy_user_password" {
-  description = "Proxy password which can be used to authenticate for the given proxy"
-  default     = ""
-  type        = string
-}
-
-    
