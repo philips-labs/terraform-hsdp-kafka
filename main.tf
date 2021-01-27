@@ -74,19 +74,28 @@ resource "hsdp_container_host_exec" "cluster" {
     destination = "/home/${var.user}/zookeeper.keystore.jks"
   }
 
-  file {
-    source      = var.kafka_ca_root
-    destination = "/home/${var.user}/ca.pem"
+  dynamic "file" {
+    for_each = var.enable_exporters ? [var.kafka_ca_root] : []
+    content {
+       source      = file.value
+       destination = "/home/${var.user}/ca.pem"
+    }
   }
 
-  file {
-    source      = var.kafka_public_key
-    destination = "/home/${var.user}/public.pem"
+  dynamic "file" {
+    for_each = var.enable_exporters ? [var.kafka_public_key] : []
+    content {
+       source      = file.value
+       destination = "/home/${var.user}/public.pem"
+    }
   }
 
-  file {
-    source      = var.kafka_private_key
-    destination = "/home/${var.user}/private.pem"
+  dynamic "file" {
+    for_each = var.enable_exporters ? [var.kafka_private_key] : []
+    content {
+       source      = file.value
+       destination = "/home/${var.user}/private.pem"
+    }
   }
 
   # Bootstrap script called with private_ip of each node in the cluster
