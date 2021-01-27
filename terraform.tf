@@ -3,7 +3,7 @@ terraform {
   required_providers {
     hsdp = {
       source  = "philips-software/hsdp"
-      version = ">= 0.9.1"
+      version = ">= 0.9.2"
     }
     random = {
       source  = "random"
