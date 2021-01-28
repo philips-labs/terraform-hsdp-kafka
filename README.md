@@ -47,14 +47,14 @@ __IMPORTANT SECURITY INFORMATION__
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13.0 |
-| hsdp | >= 0.9.1 |
+| hsdp | >= 0.9.4 |
 | random | >= 2.2.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| hsdp | >= 0.9.1 |
+| hsdp | >= 0.9.4 |
 | random | >= 2.2.1 |
 
 ## Inputs
@@ -64,15 +64,16 @@ __IMPORTANT SECURITY INFORMATION__
 | auto\_create\_topics\_enable | turn on or off auto-create-topics, defaults to true | `bool` | `true` | no |
 | bastion\_host | Bastion host to use for SSH connections | `string` | n/a | yes |
 | default\_replication\_factor | default kafka server replication factor | `number` | `1` | no |
+| enable\_exporters | Indicates whether jmx exporter and kafka exporter is enabled or not | `bool` | `false` | no |
 | host\_name | The middlename for your host default is a random number | `string` | `""` | no |
 | image | The docker image to use | `string` | `"bitnami/kafka:latest"` | no |
 | instance\_type | The instance type to use | `string` | `"t3.large"` | no |
 | iops | IOPS to provision for EBS storage | `number` | `500` | no |
-| kafka\_ca\_root | CA root store for SSL | `string` | n/a | yes |
-| kafka\_key\_store | A list of key stores one for each nore | <pre>object(<br>    { keystore  = string ,<br>      password  = string }<br>  )</pre> | n/a | yes |
-| kafka\_private\_key | Private Key for SSL | `string` | n/a | yes |
-| kafka\_public\_key | Public Key for SSL | `string` | n/a | yes |
-| kafka\_trust\_store | Trust store for SSL | <pre>object (<br>    { truststore  = string ,<br>      password    = string }<br>  )</pre> | n/a | yes |
+| kafka\_ca\_root | CA root store for SSL (only applicable when exporter is required, so only when 'enable\_exporters==true') | `string` | `""` | no |
+| kafka\_key\_store | A list of key stores one for each nore | <pre>object(<br>    { keystore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
+| kafka\_private\_key | Private Key for SSL (only applicable when exporter is required, so only when 'enable\_exporters==true') | `string` | `""` | no |
+| kafka\_public\_key | Public Key for SSL (only applicable when exporter is required, so only when 'enable\_exporters==true') | `string` | `""` | no |
+| kafka\_trust\_store | Trust store for SSL | <pre>object(<br>    { truststore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
 | nodes | Number of nodes | `number` | `1` | no |
 | private\_key | Private key for SSH access | `string` | n/a | yes |
 | retention\_hours | Retention hours for Kakfa topics | `string` | `"-1"` | no |
@@ -80,8 +81,8 @@ __IMPORTANT SECURITY INFORMATION__
 | user | LDAP user to use for connections | `string` | n/a | yes |
 | user\_groups | User groups to assign to cluster | `list(string)` | `[]` | no |
 | volume\_size | The volume size to use in GB | `number` | `50` | no |
-| zoo\_key\_store | Zookeeper Trust store for SSL | <pre>object (<br>    { keystore  = string ,<br>      password  = string }<br>  )</pre> | n/a | yes |
-| zoo\_trust\_store | Zookeeper Trust store for SSL | <pre>object (<br>    { truststore = string ,<br>      password   = string }<br>  )</pre> | n/a | yes |
+| zoo\_key\_store | Zookeeper Key store for SSL | <pre>object(<br>    { keystore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
+| zoo\_trust\_store | Zookeeper Trust store for SSL | <pre>object(<br>    { truststore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
 | zookeeper\_connect | Zookeeper connect string to use | `string` | n/a | yes |
 
 Incase you are wondering why we need zookeeper key store, its required by bitnami please refer to bitnami documentation.
@@ -94,7 +95,7 @@ This object has two properties that needs to be filled
 | keystore | The path of the keystore file in JKS format| `string` | none | yes |
 | password | The password to be used for the key store | `string` | none | yes |
 
-## trust Store object
+## Trust Store object
 This object has two properties that needs to be filled
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|

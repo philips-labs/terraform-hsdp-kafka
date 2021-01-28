@@ -109,7 +109,7 @@ variable "zoo_trust_store" {
 }
 
 variable "zoo_key_store" {
-  description = "Zookeeper Trust store for SSL"
+  description = "Zookeeper Key store for SSL"
   type = object(
     { keystore = string,
     password = string }
@@ -117,19 +117,19 @@ variable "zoo_key_store" {
 }
 
 variable "kafka_ca_root" {
-  description = "CA root store for SSL"
+  description = "CA root store for SSL (only applicable when exporter is required, so only when 'enable_exporters==true')"
   default     = ""
   type        = string
 }
 
 variable "kafka_public_key" {
-  description = "Public Key for SSL"
+  description = "Public Key for SSL (only applicable when exporter is required, so only when 'enable_exporters==true')"
   default     = ""
   type        = string
 }
 
 variable "kafka_private_key" {
-  description = "Private Key for SSL"
+  description = "Private Key for SSL (only applicable when exporter is required, so only when 'enable_exporters==true')"
   default     = "" 
   type        = string
 }
