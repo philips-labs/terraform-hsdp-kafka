@@ -84,7 +84,6 @@ variable "auto_create_topics_enable" {
   default     = true
 }
 
-
 variable "kafka_trust_store" {
   description = "Trust store for SSL"
   type = object(
@@ -119,13 +118,24 @@ variable "zoo_key_store" {
 
 variable "kafka_ca_root" {
   description = "CA root store for SSL"
+  default     = ""
   type        = string
 }
+
 variable "kafka_public_key" {
   description = "Public Key for SSL"
+  default     = ""
   type        = string
 }
+
 variable "kafka_private_key" {
   description = "Private Key for SSL"
+  default     = "" 
   type        = string
+}
+
+variable "enable_exporters" {
+  description = "Indicates whether jmx exporter and kafka exporter is enabled or not"
+  default     = false
+  type        = bool 
 }
