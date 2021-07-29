@@ -130,12 +130,24 @@ variable "kafka_public_key" {
 
 variable "kafka_private_key" {
   description = "Private Key for SSL (only applicable when exporter is required, so only when 'enable_exporters==true')"
-  default     = "" 
+  default     = ""
   type        = string
 }
 
 variable "enable_exporters" {
   description = "Indicates whether jmx exporter and kafka exporter is enabled or not"
   default     = false
-  type        = bool 
+  type        = bool
+}
+
+variable "max_request_size" {
+  description = "The maximum size of a request in bytes"
+  default     = 1048576
+  type        = number
+}
+
+variable "max_partition_fetch_bytes" {
+  description = "The maximum amount of data per-partition the server will return"
+  default     = 1048576
+  type        = number
 }

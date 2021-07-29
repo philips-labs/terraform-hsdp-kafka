@@ -3,7 +3,7 @@
 # HSDP Kafka module
 
 Module to create an Apache kafka cluster deployed
-on the HSDP Container Host infrastructure. This module serves as a 
+on the HSDP Container Host infrastructure. This module serves as a
 blueprint for future HSDP Container Host modules. Example usage
 
 ```hcl
@@ -31,7 +31,8 @@ module "kafka" {
   zoo_key_store     = {
     keystore   = "./zookeystore.jks"
     password   = "somepass"
-  }    
+  }
+  max_request_size = 1048576
 }
 ```
 
@@ -39,7 +40,7 @@ __IMPORTANT SECURITY INFORMATION__
 > This module currently **enables** only mTLS-SSL
 > between Kafka, Zookeeper or any connecting client apps.
 > Operating and maintaining applications on Container Host is always
-> your responsibility. This includes ensuring any security 
+> your responsibility. This includes ensuring any security
 > measures are in place in case you need them.
 
 ## Requirements
@@ -84,6 +85,8 @@ __IMPORTANT SECURITY INFORMATION__
 | zoo\_key\_store | Zookeeper Key store for SSL | <pre>object(<br>    { keystore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
 | zoo\_trust\_store | Zookeeper Trust store for SSL | <pre>object(<br>    { truststore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
 | zookeeper\_connect | Zookeeper connect string to use | `string` | n/a | yes |
+| max\_request\_size | Maximum request size of a message supported in broker | `number` | n/a | no |
+| max\_partition\_fetch\_bytes | The maximum amount of data per-partition the broker will return | `number` | n/a | no |
 
 Incase you are wondering why we need zookeeper key store, its required by bitnami please refer to bitnami documentation.
 
@@ -128,7 +131,7 @@ openssl pkcs12 -in $inputJksFilename -out $outputPublicKeyFilename -clcerts -nok
 
 #Export the private key with the PEM format
 keytool -importkeystore -srckeystore $inputJksFilename -destkeystore tempKeyStore.p12 -deststoretype PKCS12 -srcstorepass $inputKeyStorePassword -deststorepass $inputKeyStorePassword -noprompt
-openssl pkcs12 -in tempKeyStore.p12 -nodes -nocerts -out $outputPrivateKeyFilename  -passin pass:$inputKeyStorePassword -passout pass:$inputKeyStorePassword 
+openssl pkcs12 -in tempKeyStore.p12 -nodes -nocerts -out $outputPrivateKeyFilename  -passin pass:$inputKeyStorePassword -passout pass:$inputKeyStorePassword
 ```
 
 
