@@ -32,7 +32,7 @@ module "kafka" {
     keystore   = "./zookeystore.jks"
     password   = "somepass"
   }
-  max_request_size = 1048576
+  message_max_bytes = 1048576
 }
 ```
 
@@ -85,7 +85,7 @@ __IMPORTANT SECURITY INFORMATION__
 | zoo\_key\_store | Zookeeper Key store for SSL | <pre>object(<br>    { keystore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
 | zoo\_trust\_store | Zookeeper Trust store for SSL | <pre>object(<br>    { truststore = string,<br>    password = string }<br>  )</pre> | n/a | yes |
 | zookeeper\_connect | Zookeeper connect string to use | `string` | n/a | yes |
-| max\_request\_size | Maximum request size of a message supported in broker | `number` | n/a | no |
+| message\_max\_bytes | Maximum request size of a message supported in broker | `number` | n/a | no |
 | max\_partition\_fetch\_bytes | The maximum amount of data per-partition the broker will return | `number` | n/a | no |
 
 Incase you are wondering why we need zookeeper key store, its required by bitnami please refer to bitnami documentation.

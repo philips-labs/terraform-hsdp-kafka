@@ -102,6 +102,6 @@ resource "hsdp_container_host_exec" "cluster" {
   commands = [
     "chmod +x /home/${var.user}/bootstrap-cluster.sh",
     "chmod 755 /home/${var.user}/jmxconfig.yml.tmpl",
-    "/home/${var.user}/bootstrap-cluster.sh -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\" -p ${var.kafka_key_store.password} -t ${var.zoo_trust_store.password} -k ${var.zoo_key_store.password} -R ${var.default_replication_factor} -a ${var.auto_create_topics_enable} -e ${var.enable_exporters} -m ${var.max_request_size} -f ${var.max_partition_fetch_bytes}"
+    "/home/${var.user}/bootstrap-cluster.sh -n ${join(",", hsdp_container_host.kafka.*.private_ip)} -c ${random_id.id.hex} -d ${var.image} -i ${count.index + 1} -z ${var.zookeeper_connect} -x ${element(hsdp_container_host.kafka.*.private_ip, count.index)} -r \"${var.retention_hours}\" -p ${var.kafka_key_store.password} -t ${var.zoo_trust_store.password} -k ${var.zoo_key_store.password} -R ${var.default_replication_factor} -a ${var.auto_create_topics_enable} -e ${var.enable_exporters} -m ${var.message_max_bytes} -f ${var.max_partition_fetch_bytes}"
   ]
 }

@@ -140,8 +140,8 @@ variable "enable_exporters" {
   type        = bool
 }
 
-variable "max_request_size" {
-  description = "The maximum size of a request in bytes"
+variable "message_max_bytes" {
+  description = "The maximum size of a message accepted at broker in bytes"
   default     = 1048576
   type        = number
 }
