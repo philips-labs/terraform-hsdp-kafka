@@ -16,7 +16,7 @@ usage: bootstrap-cluster.sh
       -R default_replication_factor
       -a auto_create_topics_enable
       -e enable_exporters
-      -m max-request-size
+      -m message-max-bytes
       -f max-partition-fetch-bytes
 EOF
 }
@@ -82,7 +82,7 @@ start_kafka() {
   local zoo_trust_pass="$9"
   local default_replication_factor="${10}"
   local auto_create_topics_enable="${11}"
-  local max-request-size="${12}"
+  local message-max-bytes="${12}"
   local max-partition-fetch-bytes="${13}"
 
   servers="$(kafka_servers "$index" "$nodes")"
@@ -108,7 +108,7 @@ start_kafka() {
     --env JMX_PORT=5555 \
     --env KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=$default_replication_factor \
     --env KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=$auto_create_topics_enable \
-    --env KAFKA_CFG_MAX_REQUEST_SIZE=$max-request-size \
+    --env KAFKA_CFG_MESSAGE_MAX_BYTES=$message-max-bytes \
     --env KAFKA_CFG_MAX_PARTITION_FETCH_BYTES=$max-partition-fetch-bytes \
     --network $kafka_network \
     -v $kafka_broker_name:/bitnami/kafka \
@@ -193,7 +193,7 @@ zoo_trust_store_pass=
 default_replication_factor=
 auto_create_topics_enable=
 enable_exporters=
-max-request-size=
+message-max-bytes=
 max-partition-fetch-bytes=
 
 while [ "$1" != "" ]; do
@@ -234,8 +234,8 @@ while [ "$1" != "" ]; do
         -a | --auto-create-topics ) shift
                                 auto_create_topics_enable=$1
                                 ;;
-        -m | --max-request-size ) shift
-                                max-request-size=$1
+        -m | --message-max-bytes ) shift
+                                message-max-bytes=$1
                                 ;;
         -f | --max-partition-fetch-bytes ) shift
                                 max-partition-fetch-bytes=$1
@@ -260,7 +260,7 @@ kill_monitoring
 kill_kafka
 create_volume
 create_network
-start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable" "$max-request-size" "$max-partition-fetch-bytes"
+start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable" "$message-max-bytes" "$max-partition-fetch-bytes"
 load_certificates_and_restart
 
 if [ "$enable_exporters" == true ]; then
