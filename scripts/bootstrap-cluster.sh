@@ -16,8 +16,8 @@ usage: bootstrap-cluster.sh
       -R default_replication_factor
       -a auto_create_topics_enable
       -e enable_exporters
-      -m message-max-bytes
-      -f max-partition-fetch-bytes
+      -m message_max_bytes
+      -f max_partition_fetch_bytes
 EOF
 }
 
@@ -82,8 +82,8 @@ start_kafka() {
   local zoo_trust_pass="$9"
   local default_replication_factor="${10}"
   local auto_create_topics_enable="${11}"
-  local message-max-bytes="${12}"
-  local max-partition-fetch-bytes="${13}"
+  local message_max_bytes="${12}"
+  local max_partition_fetch_bytes="${13}"
 
   servers="$(kafka_servers "$index" "$nodes")"
   echo KAFKA_SERVERS="$servers"
@@ -108,8 +108,8 @@ start_kafka() {
     --env JMX_PORT=5555 \
     --env KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=$default_replication_factor \
     --env KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=$auto_create_topics_enable \
-    --env KAFKA_CFG_MESSAGE_MAX_BYTES=$message-max-bytes \
-    --env KAFKA_CFG_MAX_PARTITION_FETCH_BYTES=$max-partition-fetch-bytes \
+    --env KAFKA_CFG_MESSAGE_MAX_BYTES=$message_max_bytes \
+    --env KAFKA_CFG_MAX_PARTITION_FETCH_BYTES=$max_partition_fetch_bytes \
     --network $kafka_network \
     -v $kafka_broker_name:/bitnami/kafka \
     -v 'kafkacert:/bitnami/kafka/config/certs/' \
@@ -193,8 +193,8 @@ zoo_trust_store_pass=
 default_replication_factor=
 auto_create_topics_enable=
 enable_exporters=
-message-max-bytes=
-max-partition-fetch-bytes=
+message_max_bytes=
+max_partition_fetch_bytes=
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -235,10 +235,10 @@ while [ "$1" != "" ]; do
                                 auto_create_topics_enable=$1
                                 ;;
         -m | --message-max-bytes ) shift
-                                message-max-bytes=$1
+                                message_max_bytes=$1
                                 ;;
         -f | --max-partition-fetch-bytes ) shift
-                                max-partition-fetch-bytes=$1
+                                max_partition_fetch_bytes=$1
                                 ;;
         -e | --enable-exporters ) shift
                                 enable_exporters=$1
@@ -260,7 +260,7 @@ kill_monitoring
 kill_kafka
 create_volume
 create_network
-start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable" "$message-max-bytes" "$max-partition-fetch-bytes"
+start_kafka "$index" "$nodes" "$image" "$zookeeper_connect" "$external_ip" "$retention_hours" "$kafka_cert_pass" "$zoo_key_store_pass" "$zoo_trust_store_pass" "$default_replication_factor" "$auto_create_topics_enable" "$message_max_bytes" "$max_partition_fetch_bytes"
 load_certificates_and_restart
 
 if [ "$enable_exporters" == true ]; then
