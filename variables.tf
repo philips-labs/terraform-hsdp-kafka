@@ -116,6 +116,7 @@ variable "zoo_key_store" {
   )
 }
 
+<<<<<<< HEAD
 variable "kafka_ca_root" {
   description = "CA root store for SSL (only applicable when exporter is required, so only when 'enable_exporters==true')"
   default     = ""
@@ -150,4 +151,10 @@ variable "max_partition_fetch_bytes" {
   description = "The maximum amount of data per-partition the server will return"
   default     = 1048576
   type        = number
+}
+
+variable "subnet_type" {
+  type        = string
+  description = "The subnet type to provision Kafka instances in. Can be 'public' or 'private'"
+  default     = "private"
 }

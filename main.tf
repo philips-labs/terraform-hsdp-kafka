@@ -12,6 +12,7 @@ resource "hsdp_container_host" "kafka" {
 
   user_groups     = var.user_groups
   security_groups = ["analytics"]
+  subnet_type     = var.subnet_type
 
   lifecycle {
     ignore_changes = [
