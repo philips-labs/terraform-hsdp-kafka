@@ -116,7 +116,6 @@ variable "zoo_key_store" {
   )
 }
 
-<<<<<<< HEAD
 variable "kafka_ca_root" {
   description = "CA root store for SSL (only applicable when exporter is required, so only when 'enable_exporters==true')"
   default     = ""
